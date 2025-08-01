@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For you</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
+<style>
+    body {
+        background: linear-gradient(135deg, #007bff, #28a745);
+        color: white;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 10px;
+    }
+
+    .envelope-container {
+        width: min(80vw, 300px);
+        height: min(50vw, 200px);
+        position: relative;
+        perspective: 800px;
+        cursor: pointer;
+        margin: auto;
+    }
+
+    .envelope {
+        width: 100%;
+        height: 100%;
+        background: #ffffff;
+        position: relative;
+        border-radius: 5px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        overflow: hidden;
+    }
+
+    .flap {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60%;
+        background: #007bff;
+        transform-origin: top;
+        transition: transform 0.6s ease;
+        z-index: 2;
+        border-bottom: 3px solid #28a745;
+    }
+
+    .letter {
+        position: absolute;
+        bottom: -120%;
+        left: 0;
+        width: 100%;
+        height: 120%;
+        background: #fdfdfd;
+        padding: 15px;
+        text-align: center;
+        box-sizing: border-box;
+        font-size: clamp(12px, 2vw, 14px);
+        z-index: 1;
+        transition: bottom 1.2s ease, opacity 1s ease;
+        opacity: 0;
+        overflow-y: auto;
+        max-height: 100%;
+        border-radius: 5px;
+    }
+
+    .letter::-webkit-scrollbar {
+        width: 6px;
+    }
+    .letter::-webkit-scrollbar-thumb {
+        background: #28a745;
+        border-radius: 3px;
+    }
+
+    .open .flap {
+        transform: rotateX(-180deg);
+    }
+
+    .slide .letter {
+        bottom: 0;
+        opacity: 1;
+        animation: bounceTilt 0.8s ease forwards, glowPulse 1.5s ease-in-out infinite alternate;
+    }
+
+    .float .letter {
+        animation: letterFloat 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes bounceTilt {
+        0%   { transform: rotate(0deg) translateY(0); }
+        20%  { transform: rotate(-3deg) translateY(-5px); }
+        40%  { transform: rotate(3deg) translateY(-10px); }
+        60%  { transform: rotate(-2deg) translateY(-8px); }
+        80%  { transform: rotate(2deg) translateY(-5px); }
+        100% { transform: rotate(0deg) translateY(0); }
+    }
+
+    @keyframes glowPulse {
+        0%   { box-shadow: 0 0 5px #007bff, 0 0 10px #28a745; }
+        100% { box-shadow: 0 0 15px #28a745, 0 0 25px #007bff; }
+    }
+
+    @keyframes letterFloat {
+        0%   { transform: translateY(0); }
+        100% { transform: translateY(-5px); }
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>❤️</h1>
+    <p>Answer the questions honestly!</p>
+</div>
+
+<audio id="romanticMusic" loop>
+    <source src="song.mp3" type="audio/mpeg">
+</audio>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+$(document).ready(function() {
+    askName();
+});
+
+function askName() {
+    Swal.fire({
+        title: 'Is your name Triel?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes 💚',
+        cancelButtonText: 'No 💔',
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#007bff'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            askLove();
+        } else {
+            Swal.fire({
+                title: "Oops!",
+                text: "Sorry need po muna na ikaw si Triel. Close mo na ung website na to kung hindi ikaw sya, maiinggit ka lang po.",
+                icon: "error"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    askName();
+                }
+            });
+        }
+    });
+}
+
+function askLove() {
+    Swal.fire({
+        title: 'Do you love me?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes 💙',
+        cancelButtonText: 'No 💔',
+        confirmButtonColor: '#007bff',
+        cancelButtonColor: '#28a745'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            showEnvelope();
+        } else {
+            Swal.fire({
+                title: "Oops!",
+                text: "Hindi mo ko mahal?",
+                confirmButtonText: 'Yes po.',
+                icon: "error",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: "Ha!?",
+                        text: "Bakit? Dapat mahal mo muna ako.",
+                        showCancelButton: true,
+                        confirmButtonText: 'Mahal kta',
+                        cancelButtonText: 'Hindi nga kta mahal',
+                        icon: "error"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            showEnvelope();
+                        } else {
+                            Swal.fire({
+                                title: "Ha!?",
+                                text: "Bakit? Dapat mahal mo muna ako.",
+                                showCancelButton: true,
+                                confirmButtonText: 'Sige na lang, mahal na kta',
+                                cancelButtonText: 'Hindi nga kta mahal',
+                                icon: "error"
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    showEnvelope();
+                                } else {
+                                    Swal.fire({
+                                        title: "Ha!?",
+                                        text: "Bakit? Dapat mahal mo muna ako.",
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Oo na lang.',
+                                        cancelButtonText: 'Ang kulit mo, hindi nga!',
+                                        icon: "error"
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            showEnvelope();
+                                        } else {
+                                            location.reload();
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
+}
+
+function showEnvelope() {
+    Swal.fire({
+        title: 'Click the envelope 💌',
+        html: `
+            <div class="envelope-container" id="envelopeBox">
+                <div class="envelope">
+                    <div class="flap"></div>
+                    <div class="letter">
+                        <strong>Hi Asawa ko,</strong><br><br>
+                        Happy First Monthsary po! 💙💚<br><br>
+                        From the moment we started this journey,  
+                        you’ve brought light, joy, and love into my life.  
+                        This first month is just the beginning of the beautiful story we’ll continue to write together.<br><br>
+                        I’m so grateful for every laugh we’ve shared,  
+                        every memory we’ve made, and every promise we hold for the future.<br><br>
+                        Here’s to more months, more adventures,  
+                        and a love that grows stronger each day. 🥰<br><br>
+                        Forever yours,<br>
+                        <em>Your Poging Asawa 💌</em>
+                    </div>
+                </div>
+            </div>
+        `,
+        showConfirmButton: false,
+        background: '#e6f7ff',
+        width: 420,
+        didRender: () => {
+            $('#envelopeBox').on('click', function(){
+                const envelope = $(this);
+                envelope.addClass('open');
+
+                setTimeout(() => {
+
+                    envelope.addClass('slide');
+                    document.getElementById('romanticMusic').play().catch(()=>{});
+
+                    setTimeout(() => {
+                        envelope.addClass('float');
+                    }, 1200);
+
+                }, 600);
+            });
+        }
+    });
+}
+</script>
+
+</body>
+</html>
